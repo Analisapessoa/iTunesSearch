@@ -56,12 +56,15 @@
     
     [celula.nome setText:filme.nome];
     [celula.tipo setText:@"Filme"];
+    [celula.genero setText:filme.genero];
+    [celula.pais setText:filme.pais];
+    
     
     return celula;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 70;
+    return 100;
 }
 
 
