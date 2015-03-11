@@ -8,6 +8,8 @@
 
 #import "iTunesManager.h"
 #import "Entidades/Filme.h"
+#import "Musica.h"
+
 
 @implementation iTunesManager
 
@@ -34,7 +36,7 @@ static bool isFirstAccess = YES;
         termo = @"";
     }
     
-    NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&media=movie", termo];
+    NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&media=all", termo];
     NSData *jsonData = [NSData dataWithContentsOfURL: [NSURL URLWithString:url]];
     
     NSError *error;
@@ -57,10 +59,49 @@ static bool isFirstAccess = YES;
         [filme setDuracao:[item objectForKey:@"trackTimeMillis"]];
         [filme setGenero:[item objectForKey:@"primaryGenreName"]];
         [filme setPais:[item objectForKey:@"country"]];
+        [filme setTipo:[item objectForKey:@"kind" ]];
         [filmes addObject:filme];
+        
+        
     }
     
     return filmes;
+}
+
+
+- (NSArray *)buscarMusicas:(NSString *)termo {
+    if (!termo) {
+        termo = @"";
+    }
+    
+    NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&media=music", termo];
+    NSData *jsonData = [NSData dataWithContentsOfURL: [NSURL URLWithString:url]];
+    
+    NSError *error;
+    NSDictionary *resultado = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                              options:NSJSONReadingMutableContainers
+                                                                error:&error];
+    if (error) {
+        NSLog(@"Não foi possível fazer a busca. ERRO: %@", error);
+        return nil;
+    }
+    
+    NSArray *resultados = [resultado objectForKey:@"results"];
+    NSMutableArray *musicas = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *item in resultados) {
+        Musica *musica = [[Musica alloc] init];
+        [musica setNome:[item objectForKey:@"trackName"]];
+        [musica setTrackId:[item objectForKey:@"trackId"]];
+        [musica setArtista:[item objectForKey:@"artistName"]];
+        [musica setDuracao:[item objectForKey:@"trackTimeMillis"]];
+        [musica setGenero:[item objectForKey:@"primaryGenreName"]];
+        [musica setPais:[item objectForKey:@"country"]];
+        [musicas addObject:musica];
+        
+    }
+    
+    return musicas;
 }
 
 
@@ -107,3 +148,13 @@ static bool isFirstAccess = YES;
 
 
 @end
+
+//NSMutableArray *musicas = [[NSMutableArray alloc] init];
+//Musica *musica = [[Musica alloc] init];
+//[musica setNome:[item objectForKey:@"trackName"]];
+//[musica setTrackId:[item objectForKey:@"trackId"]];
+//[musica setArtista:[item objectForKey:@"artistName"]];
+//[musica setDuracao:[item objectForKey:@"trackTimeMillis"]];
+//[musica setGenero:[item objectForKey:@"primaryGenreName"]];
+//[musica setPais:[item objectForKey:@"country"]];
+//[musicas addObject:musica];
