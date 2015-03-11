@@ -17,6 +17,8 @@
     NSArray *musicas;
 }
 
+@property iTunesManager *itunes;
+
 @end
 
 @implementation TableViewController
@@ -29,9 +31,9 @@
     UINib *nib = [UINib nibWithNibName:@"TableViewCell" bundle:nil];
     [self.tableview registerNib:nib forCellReuseIdentifier:@"celulaPadrao"];
     
-    iTunesManager *itunes = [iTunesManager sharedInstance];
-    midias = [itunes buscarMidias:@"Apple"];
-    musicas = [itunes buscarMusicas:@"Apple"];
+    _itunes = [iTunesManager sharedInstance];
+    midias = [_itunes buscarMidias:@"Apple"];
+    musicas = [_itunes buscarMusicas:@"Apple"];
 
     
 #warning Necessario para que a table view tenha um espaco em relacao ao topo, pois caso contrario o texto ficara atras da barra superior
@@ -93,7 +95,6 @@
 {
     iTunesManager *itunes = [iTunesManager sharedInstance];
     midias = [itunes buscarMidias:searchBar.text];
-    
-
+    [self.tableview reloadData];
 }
 @end
