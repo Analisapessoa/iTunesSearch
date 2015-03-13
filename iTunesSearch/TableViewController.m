@@ -149,7 +149,7 @@
     }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 100;
+    return 150;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -158,8 +158,19 @@
 }
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+    NSString *text = searchBar.text;
     
     iTunesManager *itunes = [iTunesManager sharedInstance];
+    NSError *error = NULL;
+        if (!searchBar.text) {
+                searchBar.text = @"";
+            }
+        NSRegularExpression *expression = [NSRegularExpression regularExpressionWithPattern:@"^[A-Z0-9a-z_+-]{2,100}$" options:NSRegularExpressionCaseInsensitive error:&error];
+        if (error) {
+                NSLog(@"Não foi possível fazer a busca. ERRO: %@", error);
+                return;
+            }
+    
     midias = [itunes buscarMidias:searchBar.text];
     musicas = [itunes buscarMusicas:searchBar.text];
     ebooks = [itunes buscarEBooks:searchBar.text];
