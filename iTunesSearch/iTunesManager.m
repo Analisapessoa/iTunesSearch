@@ -9,6 +9,7 @@
 #import "iTunesManager.h"
 #import "Entidades/Filme.h"
 #import "Musica.h"
+#import "Ebook.h"
 
 
 @implementation iTunesManager
@@ -60,7 +61,8 @@ static bool isFirstAccess = YES;
         [filme setDuracao:[item objectForKey:@"trackTimeMillis"]];
         [filme setGenero:[item objectForKey:@"primaryGenreName"]];
         [filme setPais:[item objectForKey:@"country"]];
-        [filme setTipo:[item objectForKey:@"kind" ]];
+        [filme setTipo:[item objectForKey:@"kind"]];
+        [filme setImagem:[item objectForKey:@"artworkUrl100"]];
         [filmes addObject:filme];
         
     }
@@ -98,11 +100,49 @@ static bool isFirstAccess = YES;
         [musica setGenero:[item objectForKey:@"primaryGenreName"]];
         [musica setPais:[item objectForKey:@"country"]];
         [musica setTipo:[item objectForKey:@"kind" ]];
+        [musica setImagem:[item objectForKey:@"artworkUrl100"]];
         [musicas addObject:musica];
         
     }
     
     return musicas;
+}
+
+- (NSArray *)buscarEBooks:(NSString *)termo {
+    if (!termo) {
+        termo = @"";
+    }
+    
+    NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&media=ebook", termo];
+    NSData *jsonData = [NSData dataWithContentsOfURL: [NSURL URLWithString:url]];
+    
+    NSError *error;
+    NSDictionary *resultado = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                              options:NSJSONReadingMutableContainers
+                                                                error:&error];
+    if (error) {
+        NSLog(@"Não foi possível fazer a busca. ERRO: %@", error);
+        return nil;
+    }
+    
+    NSArray *resultados = [resultado objectForKey:@"results"];
+    NSMutableArray *ebooks = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *item in resultados) {
+        Ebook *ebook = [[Ebook alloc] init];
+        [ebook setNome:[item objectForKey:@"trackName"]];
+        [ebook setTrackId:[item objectForKey:@"trackId"]];
+        [ebook setArtista:[item objectForKey:@"artistName"]];
+        [ebook setDuracao:[item objectForKey:@"trackTimeMillis"]];
+        [ebook setGenero:[item objectForKey:@"primaryGenreName"]];
+        [ebook setPais:[item objectForKey:@"country"]];
+        [ebook setTipo:[item objectForKey:@"kind" ]];
+        [ebook setImagem:[item objectForKey:@"artworkUrl100"]];
+        [ebooks addObject:ebook];
+        
+    }
+    
+    return ebooks;
 }
 
 
@@ -149,13 +189,3 @@ static bool isFirstAccess = YES;
 
 
 @end
-
-//NSMutableArray *musicas = [[NSMutableArray alloc] init];
-//Musica *musica = [[Musica alloc] init];
-//[musica setNome:[item objectForKey:@"trackName"]];
-//[musica setTrackId:[item objectForKey:@"trackId"]];
-//[musica setArtista:[item objectForKey:@"artistName"]];
-//[musica setDuracao:[item objectForKey:@"trackTimeMillis"]];
-//[musica setGenero:[item objectForKey:@"primaryGenreName"]];
-//[musica setPais:[item objectForKey:@"country"]];
-//[musicas addObject:musica];

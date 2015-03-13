@@ -18,5 +18,6 @@
 
 - (NSArray *)buscarMidias:(NSString *)termo;
 - (NSArray *)buscarMusicas:(NSString *)termo;
+- (NSArray *)buscarEBooks:(NSString *)termo;
 
 @end
