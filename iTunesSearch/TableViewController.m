@@ -15,6 +15,7 @@
 @interface TableViewController () {
     NSArray *midias;
     NSArray *musicas;
+    NSUserDefaults *ud;
 }
 
 @property iTunesManager *itunes;
@@ -33,8 +34,11 @@
     
     _itunes = [iTunesManager sharedInstance];
     
-    musicas = [_itunes buscarMusicas:@"Apple"];
-    midias = [_itunes buscarMidias:@"Apple"];
+    ud = [NSUserDefaults standardUserDefaults];
+    NSString *ultimapesquisa = [ud objectForKey:@"ultimapesquisa"];
+    
+    musicas = [_itunes buscarMusicas:ultimapesquisa];
+    midias = [_itunes buscarMidias:ultimapesquisa];
 
     
 //#warning Necessario para que a table view tenha um espaco em relacao ao topo, pois caso contrario o texto ficara atras da barra superior
@@ -113,7 +117,7 @@
             }
         else
             {
-                return @"Musica";
+                return @"Música";
             }
     }
 
@@ -127,8 +131,12 @@
 }
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+    //NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    
     iTunesManager *itunes = [iTunesManager sharedInstance];
     midias = [itunes buscarMidias:searchBar.text];
+    musicas = [itunes buscarMusicas:searchBar.text];
+    [ud setObject:searchBar.text forKey:@"ultimapesquisa"];
     [self.tableview reloadData];
 }
 @end
